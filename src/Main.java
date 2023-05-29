@@ -2,17 +2,21 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        //pedro angelus mto gay
         ArrayList<Mestre> mestres = new ArrayList<Mestre>();
-        ArrayList<PlayerCharacter> playerCharacters = new ArrayList<PlayerCharacter>();
+       // ArrayList<PlayerCharacter> playerCharacters = new ArrayList<PlayerCharacter>();
+        ArrayList<Atributos> personagens = new ArrayList<Atributos>();
         HashMap<Integer,PlayerCharacter> jogadores = new HashMap<>();
         ArrayList<Atributos> atributos = new ArrayList<Atributos>();
 
-        //HashSet<PlayerCharacter> playerCharacters = new HashSet<PlayerCharacter>();
+
+        //HashMap<PlayerCharacter> playerCharacters = new HashSet<PlayerCharacter>();
         Scanner s= new Scanner(System.in);
 
 
         //objeto peg pega fichas
         PegaAtributo peg = new PegaAtributo();
+        SubistituiAtributos substituir = new SubistituiAtributos();
 
         //objetos teste
 Mestre pedro = new Mestre("pedro","pedro","pedro");
@@ -20,15 +24,21 @@ mestres.add(pedro);
         Mestre anacatarina = new Mestre("ana","catarina","anacatarrina");
         mestres.add(anacatarina);
         PlayerCharacter gomes = new PlayerCharacter("pedro","manuel gomes","maura",1234);
-        playerCharacters.add(gomes);
+        jogadores.put(gomes.getCodJogador(), gomes);
         PlayerCharacter andre = new PlayerCharacter("pedro","andre","maura",4321);
-        playerCharacters.add(andre);
+        jogadores.put(andre.getCodJogador(), andre);
         Atributos eeee = new Atributos(1234,"maura","manuel gomes","pedro pedradas",200,12,123,31,3,12,3,12,23,2,32,12);
         Atributos eeee1 = new Atributos(1234,"maura","manuel gomes","O a",200,12,123,31,3,12,3,12,23,2,32,12);
         Atributos eeee2 = new Atributos(123,"maura","manuel gomes","sextou",200,12,123,31,3,12,3,12,23,2,32,12);
         atributos.add(eeee);
         atributos.add(eeee2);
         atributos.add(eeee1);
+        ArrayList<Atributos> pGenerico1 = new ArrayList<>();
+        Atributos f1 = new Atributos(gomes.getCodJogador(), gomes.getSenha(), gomes.getNome(), "generico",10,10,10,5,10,10,10,10,10,10,10,10);
+        pGenerico1.add(f1);
+        Atributos f2 = new Atributos(gomes.getCodJogador(), gomes.getSenha(), gomes.getNome(), "sasuke",10,10,10,20,10,10,10,10,10,10,10,10);
+        pGenerico1.add(f2);
+        gomes.setPersonagens(pGenerico1);
 
 //inicio do codigo
         System.out.println("\nSeja-bem Vindo aos Arquivos, como posso ajudar na sua visita hoje?\n\n");
@@ -80,94 +90,117 @@ mestres.add(pedro);
             boolean encontrouCampanha = false;
             do {
                 String nomCampanha = s.next();
-                for (PlayerCharacter player : playerCharacters) {
-                    if (player.getCampanha().equals(nomCampanha)) {
+                for (Map.Entry<Integer,PlayerCharacter> player : jogadores.entrySet()) {
+                    if (player.getValue().getCampanha().equals(nomCampanha)) {
                         System.out.println("Por favor, insira o seu codigo de identificacao\n");
 
                         boolean encontrouPersonagem = false;
                         do {
                             int codPersonagem = s.nextInt();
-                            for (PlayerCharacter playe : playerCharacters) {
-                                if (playe.getCodJogador() == codPersonagem) {
-                                    System.out.println("Bem-vindo(a) " + playe.getNome() + ", sua visita era esperada");
-                                    encontrouPersonagem = true;
-                                    //resto do codigo para jogador
-                                      int sel= 0;
-                                    do {
-                                        System.out.println("Aperte 0 para rolar um dado\nAperte 1 para criar uma ficha\nAperte 2 para editar uma ficha\nAperte 3 para ver todos os seus personagens\nAperte 9 para cancelar a operacao");
-                                        sel= s.nextInt();
+                            if(jogadores.containsKey(codPersonagem)){
+                                personagens = jogadores.get(codPersonagem).personagens;
+                                System.out.println("Bem-vindo(a) " +jogadores.get(codPersonagem).getNome() + ", sua visita era esperada");
+                                encontrouPersonagem = true;
+                                //resto do codigo para jogador
+                                int sel= 0;
+                                do {
+                                    System.out.println("Aperte 0 para rolar um dado\nAperte 1 para criar uma ficha\nAperte 2 para editar uma ficha\nAperte 3 para ver todos os seus personagens\nAperte 9 para cancelar a operacao");
+                                    sel= s.nextInt();
 
 
-                                        //rolar dado
-                                        if (sel==0){
+                                    //rolar dado
+                                    if (sel==0){
 
 
-                                            ArrayList<Atributos> b = peg.apresentraPersonagens(playe,atributos);
-                                            s.nextLine();
-                                            String nom =s.nextLine();
-                                            System.out.println();
-                                            peg.pegaAtributo(b,nom);
+                                        ArrayList<Atributos> b = peg.apresentraPersonagens(jogadores.get(codPersonagem),jogadores.get(codPersonagem).personagens);
+                                        s.nextLine();
+                                        String nom =s.nextLine();
+                                        System.out.println();
+                                        peg.pegaAtributo(jogadores.get(codPersonagem).personagens,nom);
 
 
-                                            int ti=0;
+                                        int ti=0;
+                                        do {
+                                            Rolagem r = new Rolagem();
+                                            r.quantFaces();
+
+                                            Boolean continua = false;
                                             do {
-                                                Rolagem r = new Rolagem();
-                                                r.quantFaces();
+                                                continua = false;
 
-                                                Boolean continua = false;
-                                                do {
+                                                System.out.println("insira o numero de dados a serem rolados");
+                                                int nDados = s.nextInt();
+                                                r.setNumeroDados(nDados);
+
+                                                r.rolarAtributo(r,peg);
+                                                System.out.println("0-rolar novamente\n1-cancelar operacao");
+                                                int n = s.nextInt();
+                                                if (n == 0) {
+                                                    continua = true;
+                                                } else if (n == 1) {
                                                     continua = false;
+                                                    break;
+                                                }
+                                            } while (continua);
 
-                                                    System.out.println("insira o numero de dados a serem rolados");
-                                                    int nDados = s.nextInt();
-                                                    r.setNumeroDados(nDados);
-
-                                                    r.rolarAtributo(r,peg);
-                                                    System.out.println("0-rolar novamente\n1-cancelar operacao");
-                                                    int n = s.nextInt();
-                                                    if (n == 0) {
-                                                        continua = true;
-                                                    } else if (n == 1) {
-                                                        continua = false;
-                                                        break;
-                                                    }
-                                                } while (continua);
-
-                                            }while(ti!=0);
+                                        }while(ti!=0);
 
 
-                                        }
+                                    }
 
 
-                                        //criar nova ficha
-                                        else if (sel==1){
-                                            Atributos ficha = new Atributos();
-                                            //se eu adicionar ao array list atributos
-                                            //se eu so implementar o metodo a ficha vai receber o valor se ficha = ficha.montarPe
-                                                atributos.add((Atributos) ficha.montarPersonagem(playe));//wut
-
-                                                System.out.println("ficha cadastrada com sucesso");
-
+                                    //criar nova ficha
+                                    else if (sel==1){
+                                        Atributos ficha = new Atributos();
+                                        ficha = (Atributos) ficha.montarPersonagem(jogadores.get(codPersonagem));
+                                        PlayerCharacter jogador = jogadores.get(codPersonagem);
+                                        if (jogador.getPersonagens() != null) {
+                                            jogador.adicionarPersonagem(ficha);
+                                            System.out.println("ficha cadastrada com sucesso");
+                                        } else {
+                                            System.out.println("coringuei");
 
                                         }
 
 
-                                        //editar ficha existente
-                                        else if (sel==2){
-                                            Atributos ficha = new Atributos();
-                                            ficha.montarPersonagem(playe,peg,atributos);
+                                    }
+
+
+                                    //editar ficha existente
+                                    else if (sel==2){
+                                        PlayerCharacter jogador = jogadores.get(codPersonagem);
+                                        Atributos ficha = new Atributos();
+                                        ArrayList<Atributos> ficha2 = new ArrayList<Atributos>();
+                                        ficha.montarPersonagem(jogador,peg,jogador.getPersonagens());
+                                        String nom = s.next();
+                                        //ta foda
+                                        //////achar a posicao do indice e
 
 
 
-                                            //vai so adicionar outra ficha, como subistituir a ficha?
-                                            //atributos.add(ficha);
-                                            //eu poderia pegar o index de onde esta a ficha e alocar ela, mas como fazer isso?
-
-                                        }
-                                    }while(sel!=9);
+                                        ficha2 = jogador.personagens;
+                                        int ind = substituir.acharIndex(jogadores.get(codPersonagem),nom);
+                                        System.out.println(ind);
 
 
 
+                                        //jogador.subistituirPersonagem(jogador.personagens,substituir.acharIndex(jogadores.get(codPersonagem),nom));
+                                        //personagens.set(,jogador.personagens);
+
+                                        System.out.println("ficha cadastrada com sucesso");
+
+
+
+                                        //vai so adicionar outra ficha, como subistituir a ficha?
+                                        //atributos.add(ficha);
+                                        //eu poderia pegar o index de onde esta a ficha e alocar ela, mas como fazer isso?
+
+                                    }
+                                    else if (sel==3){
+                                        PlayerCharacter jogador = jogadores.get(codPersonagem);
+                                        System.out.println(jogador.getPersonagens());
+                                    }
+                                }while(sel!=9);
 
 
 
@@ -177,10 +210,13 @@ mestres.add(pedro);
 
 
 
-                                    break;
-                                }
+
+
+
+                                break;
+
                             }
-                            if (!encontrouPersonagem) {
+                                                        if (!encontrouPersonagem) {
                                 System.out.println("Nenhum personagem foi encontrado com esse código. Tente novamente escrever o código");
                             }
                         } while (!encontrouPersonagem);
@@ -237,25 +273,24 @@ mestres.add(pedro);
             } else if (sel==1) {
                 PlayerCharacter player = new PlayerCharacter();
                 boolean temIgual = false;
-                int cod=0;
+                int codPersonagem=0;
                 do{
                     System.out.println("Digite um codigo para o jogador");
                     try{
-                        cod = s.nextInt();
+                        codPersonagem = s.nextInt();
                     }catch (InputMismatchException e1){
                         System.out.println("Você digitou uma letra onde deveria digitar um numero. Por favor insira um numero");
                     }
-                    for (PlayerCharacter Playe:playerCharacters) {
-                        if (Playe.getCodJogador()==cod){
+                    if(jogadores.containsKey(codPersonagem)){
                             temIgual = true;
                             System.out.println("Já existe um jogador com esse codigo, escolha outro codigo");
                         }else{
                             temIgual = false;
                         }
-                    }
+
                 }while(temIgual);
                 try{
-                    player.setCodJogador(cod);
+                    player.setCodJogador(codPersonagem);
                     s.nextLine();
                     System.out.println("digite a campanha que voce participa");
                     boolean encontrouCampanha = false;
@@ -272,6 +307,8 @@ mestres.add(pedro);
                             System.out.println("Nenhuma campanha foi encontrada com esse nome. Tente novamente escrever a campanha");
                         }
                     } while (encontrouCampanha==false);
+                    ArrayList<Atributos> pGenerico = new ArrayList<>();
+
                     s.nextLine();
                     System.out.println("digite seu nome");
                     String nom=s.next();
@@ -279,7 +316,11 @@ mestres.add(pedro);
                     System.out.println("digite sua senha");
                     String sen=s.next();
                     player.setSenha(sen);
-                    playerCharacters.add(player);
+                    Atributos f = new Atributos(player.getCodJogador(), player.getSenha(), player.getNome(), "generico",10,10,10,10,10,10,10,10,10,10,10,10);
+                    pGenerico.add(f);
+                    pGenerico.clear();
+                    player.setPersonagens(pGenerico);
+                    jogadores.put(player.getCodJogador(), player);
                     System.out.println("cadastro concluido\n\n");
 
 

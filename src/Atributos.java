@@ -22,11 +22,11 @@ public class Atributos extends Ficha{
         try{
             //pega os personagens do jogador playe
             ArrayList<Atributos> personagensPessoais = peg.apresentraPersonagens(playe,atributos);
-            peg.apresentraPersonagens(playe,atributos);
+            //peg.apresentraPersonagens(playe,atributos);
             do {
             //scanner para achar os personagens que saem do array personagensPessoais do apresentaPersonagens
-            s.nextLine();
             String nom =s.nextLine();
+                System.out.println(nom);
             System.out.println();
 
             //encontra o personagem para ter seus atributos mudados
